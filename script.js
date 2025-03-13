@@ -9,8 +9,8 @@ const sconto = document.getElementById('sconto');
 const privacy = document.getElementById('privacy');
 const tabellaRisultato = document.getElementById('tabella-risultato');
 
-
-preventivo.addEventListener('submit', function(e) {
+/*
+preventivo.addEventListener('submit', function(e))
     event.preventDefault();
  
     let opzioneSelezionataText = tipoLavoro.options[tipoLavoro.selectedIndex].text;
@@ -25,7 +25,7 @@ preventivo.addEventListener('submit', function(e) {
     } else if (tipoLavoro.value === 'analisi') {
         prezzo =  33.60 * oreLavoro;
     }
-    let codiceSconto = [
+    const codiceSconto = [
         'YHDNU32',
         'JANJC63',
         'PWKCN25',
@@ -33,7 +33,8 @@ preventivo.addEventListener('submit', function(e) {
         'POCIE24',
     ];
     
-    (let i = 0 ; i < codiceSconto.length; i++) {
+
+    for(let i = 0 ; i < codiceSconto.length; i++) {
         console.log(sconto.value)
         console.log(codiceSconto[i], 'Codice Sconto')
         if(sconto.value === codiceSconto[i]) {
@@ -52,3 +53,50 @@ preventivo.addEventListener('submit', function(e) {
     document.getElementById('tipo-preventivo').innerHTML = tipoLavoro.value;
     document.getElementById('sconto-preventivo').innerHTML = sconto.value;
     document.getElementById('sconto-applicato').innerHTML = sconto_applicato;
+*/
+
+document.getElementById("preventivo").addEventListener("submit", function(e) {
+    e.preventDefault(); // Evita il ricaricamento della pagina
+
+    let tipoLavoro = document.getElementById("tipoLavoro").value;
+    let oreLavoro = 10; // Ore fisse per progetto
+    let prezzoOrario;
+
+    // Determina il prezzo in base al tipo di lavoro
+    if (tipoLavoro === "backend") {
+        prezzoOrario = 20.50;
+    } else if (tipoLavoro === "frontend") {
+        prezzoOrario = 15.30;
+    } else if (tipoLavoro === "analisi") {
+        prezzoOrario = 33.60;
+    }
+
+    // Calcola il preventivo finale
+    let preventivoFinale = oreLavoro * prezzoOrario;
+
+    // Mostra il risultato nella pagina
+    document.getElementById("risultato").innerHTML = `Costo totale: <strong>€${preventivoFinale.toFixed(2)}</strong>`;
+
+    const codiceSconto = [
+        'YHDNU32',
+        'JANJC63',
+        'PWKCN25',
+        'SJDPO96',
+        'POCIE24',
+    ];
+});
+
+function calcolaPrezzo(prezzoBase, codiceInserito) {
+    if (codiciValidi.includes(codiceInserito)) {
+        let sconto = prezzoBase * 0.25; // 25% di sconto
+        let prezzoFinale = prezzoBase - sconto;
+        console.log(`Codice valido! Hai uno sconto del 25%. Prezzo finale: €${prezzoFinale.toFixed(2)}`);
+    } else {
+        console.log(`Codice non valido. Prezzo finale: €${prezzoBase.toFixed(2)}`);
+    }
+}
+
+// Esempio di utilizzo
+let prezzoBase = 100; // Prezzo iniziale
+let codiceUtente = prompt("Inserisci il codice sconto:"); // Richiesta all'utente
+calcolaPrezzo(prezzoBase, codiceUtente);
