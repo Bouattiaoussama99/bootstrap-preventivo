@@ -1,102 +1,156 @@
-console.log('Inizio js');
-const preventivo = document.getElementById('preventivo');
-const nome = document.getElementById('nome');
-const cognome = document.getElementById('cognome');
-const email = document.getElementById('email');
-const tipoLavoro = document.getElementById('tipoLavoro');
-const messaggio = document.getElementById('messaggio');
-const sconto = document.getElementById('sconto');
-const privacy = document.getElementById('privacy');
-const tabellaRisultato = document.getElementById('tabella-risultato');
+// Elementi del form
+const formElement = document.getElementById('form')
+const emailInputElement = document.getElementById('email')
+const promoElement = document.getElementById('promo')
+const jobElement = document.getElementById('job')
+const checkElement = document.getElementById('check')
+const nameElement = document.getElementById('name')
+const surnameElement = document.getElementById('surname')
+const priceElement = document.getElementById('price')
 
-/*
-preventivo.addEventListener('submit', function(e))
-    event.preventDefault();
- 
-    let opzioneSelezionataText = tipoLavoro.options[tipoLavoro.selectedIndex].text;
-    const oreLavoro = 10; 
-    let prezzo = 0;
-    let sconto_applicato = 0;
+let fullPrice = 0
+let promoPrice = 0
 
-    if(tipoLavoro.value === 'backend') {
-        prezzo = 20.50 * oreLavoro;
-    } else if ( tipoLavoro.value === 'frontend') {
-        prezzo =  15.30 * oreLavoro;
-    } else if (tipoLavoro.value === 'analisi') {
-        prezzo =  33.60 * oreLavoro;
-    }
-    const codiceSconto = [
-        'YHDNU32',
-        'JANJC63',
-        'PWKCN25',
-        'SJDPO96',
-        'POCIE24',
-    ];
+formElement.addEventListener('submit', function (event) {
+
+    // blocca invio del form
+    event.preventDefault()
+    console.log('submit del form')
+
+    nameElement.classList.remove('is-invalid')
+    surnameElement.classList.remove('is-invalid')
+    jobElement.classList.remove('is-invalid')
+    promoElement.classList.remove('is-invalid')
     
 
-    for(let i = 0 ; i < codiceSconto.length; i++) {
-        console.log(sconto.value)
-        console.log(codiceSconto[i], 'Codice Sconto')
-        if(sconto.value === codiceSconto[i]) {
-            sconto_applicato = (prezzo * 25/100);
-            prezzo = prezzo -  sconto_applicato;
-        }
+
+    // Controllo campi 
+    const name = checkName(nameElement.value)
+    if (name === false) {
+        console.log("Nome non valido")
+        nameElement.classList.add('is-invalid')
     }
-    if(sconto_applicato === 0 && sconto.value != '') {
-        sconto_applicato = 'Codice sconto non valido'
-    }
-
-    tabellaRisultato.removeAttribute('style');
-    console.log('prezzo: ', prezzo);
-    document.getElementById('prezzo').innerHTML = prezzo.toFixed(2) + '€';
-    document.getElementById('email-preventivo').innerHTML = email.value;
-    document.getElementById('tipo-preventivo').innerHTML = tipoLavoro.value;
-    document.getElementById('sconto-preventivo').innerHTML = sconto.value;
-    document.getElementById('sconto-applicato').innerHTML = sconto_applicato;
-*/
-
-document.getElementById("preventivo").addEventListener("submit", function(e) {
-    e.preventDefault(); // Evita il ricaricamento della pagina
-
-    let tipoLavoro = document.getElementById("tipoLavoro").value;
-    let oreLavoro = 10; // Ore fisse per progetto
-    let prezzoOrario;
-
-    // Determina il prezzo in base al tipo di lavoro
-    if (tipoLavoro === "backend") {
-        prezzoOrario = 20.50;
-    } else if (tipoLavoro === "frontend") {
-        prezzoOrario = 15.30;
-    } else if (tipoLavoro === "analisi") {
-        prezzoOrario = 33.60;
+    const surname = checkSurname(surnameElement.value)
+    if (surname === false) {
+        console.log("Cognome non valido")
+        surnameElement.classList.add('is-invalid')
     }
 
-    // Calcola il preventivo finale
-    let preventivoFinale = oreLavoro * prezzoOrario;
+    const job = checkJob(jobElement.value)
+    if (job === false) {
+        console.log("Lavoro non selezionato")
+        jobElement.classList.add('is-invalid')
+    }
 
-    // Mostra il risultato nella pagina
-    document.getElementById("risultato").innerHTML = `Costo totale: <strong>€${preventivoFinale.toFixed(2)}</strong>`;
+    const promo = checkPromo(promoElement.value)
+    if (promo === false) {
+        console.log("Promo non valida")
+        promoElement.classList.add('is-invalid')
+    }
 
-    const codiceSconto = [
-        'YHDNU32',
-        'JANJC63',
-        'PWKCN25',
-        'SJDPO96',
-        'POCIE24',
-    ];
-});
+    // Calcolo preventivo
+    const fullPrice = calcoloPrice(jobElement.value)
+    console.log(fullPrice)
 
-function calcolaPrezzo(prezzoBase, codiceInserito) {
-    if (codiciValidi.includes(codiceInserito)) {
-        let sconto = prezzoBase * 0.25; // 25% di sconto
-        let prezzoFinale = prezzoBase - sconto;
-        console.log(`Codice valido! Hai uno sconto del 25%. Prezzo finale: €${prezzoFinale.toFixed(2)}`);
-    } else {
-        console.log(`Codice non valido. Prezzo finale: €${prezzoBase.toFixed(2)}`);
+    // Calcolo preventivo con promo
+    if (promo) {
+        promoPrice = calcoloPromoPrice(fullPrice, promo)
+        console.log(promoPrice)
+        priceElement.innerHTML = promoPrice
+    }
+    else {
+        priceElement.innerHTML = fullPrice
+    }
+
+})
+
+// Funzione controllo inserimento lavoro
+function checkJob(job) {
+    if (job === '0') {
+        return false
+    }
+    else {
+        return true
     }
 }
 
-// Esempio di utilizzo
-let prezzoBase = 100; // Prezzo iniziale
-let codiceUtente = prompt("Inserisci il codice sconto:"); // Richiesta all'utente
-calcolaPrezzo(prezzoBase, codiceUtente);
+// Funzione per controllo nome
+function checkName(name) {
+    if (name.length >= 3) {
+        return true
+    }
+    else {
+        return false
+
+    }
+}
+
+// Funzione per controllo cognome
+function checkSurname(surname) {
+    if (surname.length >= 3) {
+        return true
+    }
+    else {
+        return false
+    }
+}
+
+// Funzione per controllo privacy
+function checkPrivacy(check) {
+    if (check == true) {
+        return true
+    }
+    else {
+        return false
+    }
+}
+
+// Funzione per calcolo del prezzo finale
+function calcoloPromoPrice(fullPrice, promo) {
+    let promoPrice = 0
+    let sconto = 0
+    if (promo) {
+        sconto = (fullPrice * 25) / 100
+        promoPrice = fullPrice - sconto
+    }
+    return promoPrice
+}
+
+// Funzione per calcolo preventivo a prezzo pieno
+function calcoloPrice(job) {
+    let fullPrice = 0
+    if (job === 'BE') {
+        fullPrice = 20.50 * 10
+    }
+    else if (job === 'FE') {
+        fullPrice = 15.30 * 10
+    }
+    else if (job === 'PA') {
+        fullPrice = 33.60 * 10
+    }
+    return fullPrice
+}
+
+// Funzione per controllo promozioni
+function checkPromo(promo) {
+    if (promo === 'YHDNU32') {
+        return true
+    }
+    else if (promo === 'JANJC63') {
+        return true
+    }
+    else if (promo === 'PWKCN25') {
+        return true
+    }
+
+    else if (promo === 'SJDPO96') {
+        return true
+    }
+
+    else if (promo === 'POCIE24') {
+        return true
+    }
+    else {
+        return false
+    }
+}
